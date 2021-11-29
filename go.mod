@@ -12,4 +12,4 @@ require (
 	golang.org/x/crypto v0.0.0-20200128174031-69ecbb4d6d5d
 )
 
-replace github.com/dusk-network/dusk-crypto => github.com/vosbor/dusk-crypto v1.1.8-0.20211129084337-e3cc09ba2d8d
+replace github.com/dusk-network/dusk-crypto => github.com/vosbor/dusk-crypto v1.1.10
