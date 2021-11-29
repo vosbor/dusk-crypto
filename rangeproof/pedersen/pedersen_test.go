@@ -90,5 +90,5 @@ func TestPedersenVector(t *testing.T) {
 	expected.Add(&expected, &B0two)
 	expected.Add(&expected, &B1two)
 
-	assert.Equal(t, expected.Bytes(), []byte(comm.Value.Bytes()))
+	assert.Equal(t, expected.Bytes(), []byte(comm.Commit.Bytes()))
 }

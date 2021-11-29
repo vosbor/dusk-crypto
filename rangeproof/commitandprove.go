@@ -1,6 +1,7 @@
 package rangeproof
 
 import (
+	"encoding/base64"
 	"math/big"
 
 	ristretto "github.com/bwesterb/go-ristretto"
@@ -25,6 +26,7 @@ type RangeProof struct {
 	P Proof
 	A int64
 	B int64
+	C string
 }
 
 /*
@@ -56,6 +58,9 @@ together with the commitment c.
 func GenProof(v int64, c Commitment, a int64, b int64) (RangeProof, error) {
 	amounts := []ristretto.Scalar{}
 	commitments := make([]pedersen.Commitment, 0, M)
+
+	// convert commitment to base64 value, blinding factor remains hidden
+	c1 := base64.StdEncoding.EncodeToString(c.PedersenCommitment.Commit.Bytes())
 
 	// N is number of bits in range
 	// So amount will be between 0...2^(N-1)
@@ -100,6 +105,7 @@ func GenProof(v int64, c Commitment, a int64, b int64) (RangeProof, error) {
 		P: p,
 		A: a,
 		B: b,
+		C: c1,
 	}
 
 	return output, err
