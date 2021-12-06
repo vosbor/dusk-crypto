@@ -5,7 +5,7 @@ import (
 	"math/big"
 
 	ristretto "github.com/bwesterb/go-ristretto"
-	"github.com/dusk-network/dusk-crypto/rangeproof/pedersen"
+	"github.com/vosbor/dusk-crypto/rangeproof/pedersen"
 )
 
 /*
@@ -48,6 +48,18 @@ func Commit(v int64) (Commitment, error) {
 	}
 
 	return output, nil
+}
+
+func VerifyCommit(v int64, c Commitment) bool {
+
+	genData := []byte("vosbor.BulletProof.v1")
+	ped := pedersen.New(genData)
+	ped.BaseVector.Compute(uint32((M * N)))
+
+	var amount ristretto.Scalar
+	amount.SetBigInt(big.NewInt(v))
+
+	return ped.VerifyCommitment(amount, c.PedersenCommitment)
 }
 
 /*

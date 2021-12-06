@@ -11,7 +11,7 @@ import (
 	ristretto "github.com/bwesterb/go-ristretto"
 	"github.com/dusk-network/dusk-crypto/rangeproof/fiatshamir" // from dusk network
 	"github.com/dusk-network/dusk-crypto/rangeproof/innerproduct"
-	"github.com/dusk-network/dusk-crypto/rangeproof/pedersen"
+	"github.com/vosbor/dusk-crypto/rangeproof/pedersen"
 	"github.com/dusk-network/dusk-crypto/rangeproof/vector"
 )
 

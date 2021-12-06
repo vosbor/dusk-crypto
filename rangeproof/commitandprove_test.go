@@ -1,12 +1,14 @@
 package rangeproof
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
 func TestPositiveFlow(t *testing.T) {
+	fmt.Println("Testing valid proof construction.")
 	n := int64(42)
 	c, errc := Commit(n)
 	p, errp := GenProof(n, c, 20, 100)
