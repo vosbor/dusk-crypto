@@ -176,6 +176,21 @@ func (p *Pedersen) CommitToScalar(v ristretto.Scalar) Commitment {
 	}
 }
 
+func (p *Pedersen) VerifyCommitment(v ristretto.Scalar, c Commitment) bool {
+	// v * Base
+	var vBase ristretto.Point
+	vBase.ScalarMult(&p.BasePoint, &v)
+	// blind * BlindPoint
+	var blindPoint ristretto.Point
+	blindPoint.ScalarMult(&p.BlindPoint, &c.BlindingFactor)
+
+	var sum ristretto.Point
+	sum.SetZero()
+	sum.Add(&vBase, &blindPoint)
+
+	return sum == c.Commit
+}
+
 // CommitToVectors will take n set of vectors and form a commitment to them s.t.
 // V = aH + <v1, G1> + <v2, G2> + <v3, G3>
 // where a is a scalar, v1 is a vector of scalars, and G1 is a vector of points

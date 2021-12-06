@@ -20,6 +20,7 @@ func TestPedersenScalar(t *testing.T) {
 
 	assert.NotEqual(t, nil, commitment)
 
+	assert.Equal(t, ped.VerifyCommitment(s, commitment), true)
 }
 
 func TestEncodeDecode(t *testing.T) {
