@@ -2,6 +2,7 @@ package rangeproof
 
 import (
 	"encoding/base64"
+	"errors"
 	"math/big"
 
 	ristretto "github.com/bwesterb/go-ristretto"
@@ -68,6 +69,11 @@ v belongs to the interval [a, b) and is the correctly tied
 together with the commitment c.
 */
 func GenProof(v int64, c Commitment, a int64, b int64) (RangeProof, error) {
+
+	if !VerifyCommit(v, c) {
+		return RangeProof{}, errors.New("Invalid commitment")
+	}
+
 	amounts := []ristretto.Scalar{}
 	commitments := make([]pedersen.Commitment, 0, M)
 

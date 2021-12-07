@@ -4,8 +4,18 @@ import (
 	"fmt"
 	"testing"
 
+	ristretto "github.com/bwesterb/go-ristretto"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func TestCommitPositiveFlow(t *testing.T) {
+	fmt.Println("Testing valid commit construction.")
+	n := int64(42)
+	c, errc := Commit(n)
+	assert.Equal(t, VerifyCommit(n, c), true)
+	require.Nil(t, errc)
+}
 
 func TestPositiveFlow(t *testing.T) {
 	fmt.Println("Testing valid proof construction.")
@@ -19,6 +29,7 @@ func TestPositiveFlow(t *testing.T) {
 }
 
 func TestNegativeFlow1(t *testing.T) {
+	fmt.Println("Testing invalid proof construction.")
 	n := int64(42)
 	c, errc := Commit(n)
 	p, errp := GenProof(n, c, 20, 41)
@@ -29,9 +40,24 @@ func TestNegativeFlow1(t *testing.T) {
 }
 
 func TestNegativeFlow2(t *testing.T) {
+	fmt.Println("Testing invalid proof construction.")
 	n := int64(42)
 	c, errc := Commit(n)
 	p, errp := GenProof(n, c, 43, 100)
+	errv := VerifyProof(p)
+	require.Nil(t, errc)
+	require.NotNil(t, errp)
+	require.NotNil(t, errv)
+}
+
+func TestNegativeFlow3(t *testing.T) {
+	fmt.Println("Testing invalid commit for proof construction.")
+	n := int64(42)
+	c, errc := Commit(n)
+	blind := ristretto.Scalar{}
+	blind.Rand()
+	c.PedersenCommitment.BlindingFactor = blind
+	p, errp := GenProof(n, c, 20, 41)
 	errv := VerifyProof(p)
 	require.Nil(t, errc)
 	require.NotNil(t, errp)
