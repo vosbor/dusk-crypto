@@ -201,7 +201,7 @@ func (p *Pedersen) VerifyCommitment(v ristretto.Scalar, c Commitment) bool {
 	sum.SetZero()
 	sum.Add(&vBase, &blindPoint)
 
-	return sum == c.Commit
+	return sum.Equals(&c.Commit)
 }
 
 // CommitToVectors will take n set of vectors and form a commitment to them s.t.

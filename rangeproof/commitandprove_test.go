@@ -7,7 +7,22 @@ import (
 	ristretto "github.com/bwesterb/go-ristretto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/vosbor/dusk-crypto/rangeproof/pedersen"
 )
+
+func TestCommitAddition(t *testing.T) {
+	fmt.Println("Testing valid commit construction.")
+	a := int64(42)
+	b := int64(41)
+	ca, errc := Commit(a)
+	cb, errc := Commit(b)
+	cc := pedersen.Add(ca.PedersenCommitment, cb.PedersenCommitment)
+	commitab := Commitment {
+		PedersenCommitment: cc,
+	}
+	assert.Equal(t, VerifyCommit(a+b, commitab), true)
+	require.Nil(t, errc)
+}
 
 func TestCommitPositiveFlow(t *testing.T) {
 	fmt.Println("Testing valid commit construction.")
