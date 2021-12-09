@@ -10,6 +10,28 @@ import (
 	"github.com/vosbor/dusk-crypto/rangeproof/pedersen"
 )
 
+func TestAddition(t * testing.T) {
+	ped := pedersen.New([]byte("random data"))
+
+	a := ristretto.Scalar{}
+	a.Rand()
+	b := ristretto.Scalar{}
+	b.Rand()
+
+	ca := ped.CommitToScalar(a)
+	cb := ped.CommitToScalar(b)
+
+	var point ristretto.Point
+	point.SetZero()
+	point.Add(&ca.Commit, &cb.Commit)
+	blind := ca.BlindingFactor
+	blind.Add(&ca.BlindingFactor, &cb.BlindingFactor)
+
+	cc := pedersen.Add(ca, cb)
+	assert.Equal(t, cc.Commit, point)
+	assert.Equal(t, cc.BlindingFactor, blind)
+}
+
 func TestPedersenScalar(t *testing.T) {
 	ped := pedersen.New([]byte("random data"))
 

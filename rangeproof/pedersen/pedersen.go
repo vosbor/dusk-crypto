@@ -50,6 +50,19 @@ type Commitment struct {
 	BlindingFactor ristretto.Scalar
 }
 
+func Add(a Commitment, b Commitment) Commitment {
+	var point ristretto.Point
+	point.SetZero()
+	point.Add(&a.Commit, &b.Commit)
+	var blind ristretto.Scalar
+	blind = a.BlindingFactor
+	blind.Add(&a.BlindingFactor, &b.BlindingFactor)
+	return Commitment {
+		Commit: point,
+		BlindingFactor: blind,
+	}
+}
+
 func (c *Commitment) Encode(w io.Writer) error {
 	return binary.Write(w, binary.BigEndian, c.Commit.Bytes())
 }
