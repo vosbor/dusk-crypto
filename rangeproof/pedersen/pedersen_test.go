@@ -10,7 +10,7 @@ import (
 	"github.com/vosbor/dusk-crypto/rangeproof/pedersen"
 )
 
-func TestAddition(t * testing.T) {
+func TestAddition(t *testing.T) {
 	ped := pedersen.New([]byte("random data"))
 
 	a := ristretto.Scalar{}
