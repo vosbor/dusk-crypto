@@ -11,17 +11,18 @@ import (
 )
 
 func TestCommitAddition(t *testing.T) {
-	fmt.Println("Testing valid commit construction.")
+	fmt.Println("Testing commit addition.")
 	a := int64(42)
 	b := int64(41)
-	ca, errc := Commit(a)
-	cb, errc := Commit(b)
+	ca, erra := Commit(a)
+	cb, errb := Commit(b)
 	cc := pedersen.Add(ca.PedersenCommitment, cb.PedersenCommitment)
 	commitab := Commitment {
 		PedersenCommitment: cc,
 	}
 	assert.Equal(t, VerifyCommit(a+b, commitab), true)
-	require.Nil(t, errc)
+	require.Nil(t, erra)
+	require.Nil(t, errb)
 }
 
 func TestCommitPositiveFlow(t *testing.T) {
