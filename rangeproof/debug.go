@@ -7,7 +7,6 @@ import (
 
 	ristretto "github.com/bwesterb/go-ristretto"
 	"github.com/vosbor/dusk-crypto/rangeproof/vector"
-
 	"github.com/vosbor/dusk-crypto/rangeproof/pedersen"
 )
 

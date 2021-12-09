@@ -4,8 +4,8 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/vosbor/dusk-crypto/rangeproof"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBitCommitToValue(t *testing.T) {

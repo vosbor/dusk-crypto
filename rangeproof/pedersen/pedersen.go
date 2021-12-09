@@ -57,8 +57,8 @@ func Add(a Commitment, b Commitment) Commitment {
 	var blind ristretto.Scalar
 	blind = a.BlindingFactor
 	blind.Add(&a.BlindingFactor, &b.BlindingFactor)
-	return Commitment {
-		Commit: point,
+	return Commitment{
+		Commit:         point,
 		BlindingFactor: blind,
 	}
 }

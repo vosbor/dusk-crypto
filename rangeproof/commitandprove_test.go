@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	ristretto "github.com/bwesterb/go-ristretto"
+	"github.com/vosbor/dusk-crypto/rangeproof/pedersen"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/vosbor/dusk-crypto/rangeproof/pedersen"
 )
 
 func TestCommitAddition(t *testing.T) {
@@ -17,7 +17,7 @@ func TestCommitAddition(t *testing.T) {
 	ca, erra := Commit(a)
 	cb, errb := Commit(b)
 	cc := pedersen.Add(ca.PedersenCommitment, cb.PedersenCommitment)
-	commitab := Commitment {
+	commitab := Commitment{
 		PedersenCommitment: cc,
 	}
 	assert.Equal(t, VerifyCommit(a+b, commitab), true)

@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	ristretto "github.com/bwesterb/go-ristretto"
-	"github.com/stretchr/testify/assert"
 	"github.com/vosbor/dusk-crypto/rangeproof/pedersen"
 	"github.com/vosbor/dusk-crypto/rangeproof/vector"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestProofCreation(t *testing.T) {
