@@ -1,14 +1,30 @@
 package rangeproof
 
 import (
+	"bytes"
 	"fmt"
 	"testing"
 
 	ristretto "github.com/bwesterb/go-ristretto"
-	"github.com/vosbor/dusk-crypto/rangeproof/pedersen"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/vosbor/dusk-crypto/rangeproof/pedersen"
 )
+
+func TestCommitSerialization(t *testing.T) {
+	fmt.Println("Testing serialization.")
+	a := int64(42)
+	ca, erra := Commit(a)
+	buffer := new(bytes.Buffer)
+	err := ca.PedersenCommitment.Encode(buffer)
+	c := pedersen.Commitment{}
+	err = c.Decode(buffer)
+	c.BlindingFactor = ca.PedersenCommitment.BlindingFactor
+	res := VerifyCommit(a, Commitment{PedersenCommitment: c})
+	require.True(t, res)
+	require.Nil(t, erra)
+	require.Nil(t, err)
+}
 
 func TestCommitAddition(t *testing.T) {
 	fmt.Println("Testing commit addition.")
