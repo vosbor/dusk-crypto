@@ -26,7 +26,12 @@ a secret belongs to a certain interval.
 type RangeProof struct {
 	P Proof
 	A int64
+	CA Commitment
+	CApC Commitment
 	B int64
+	CB Commitment
+	CBpC Commitment
+	CC Commitment
 	C string
 }
 
@@ -51,6 +56,9 @@ func Commit(v int64) (Commitment, error) {
 	return output, nil
 }
 
+/*
+   Recalculate the commitment and compare.
+*/
 func VerifyCommit(v int64, c Commitment) bool {
 
 	genData := []byte("vosbor.BulletProof.v1")
@@ -78,7 +86,7 @@ func GenProof(v int64, c Commitment, a int64, b int64) (RangeProof, error) {
 	commitments := make([]pedersen.Commitment, 0, M)
 
 	// convert commitment to base64 value, blinding factor remains hidden
-	c1 := base64.StdEncoding.EncodeToString(c.PedersenCommitment.Commit.Bytes())
+	c_v := base64.StdEncoding.EncodeToString(c.PedersenCommitment.Commit.Bytes())
 
 	// N is number of bits in range
 	// So amount will be between 0...2^(N-1)
@@ -93,16 +101,16 @@ func GenProof(v int64, c Commitment, a int64, b int64) (RangeProof, error) {
 
 	b2 := big.NewInt(2)
 	bn := big.NewInt(N)
-
 	b2.Exp(b2, bn, nil)
+	b2.Sub(b2, big.NewInt(1))
 
-	bigv_b := big.NewInt(v)
-	bigv_a := big.NewInt(v)
+	bigv_a := big.NewInt(a)
+	bigv_a = bigv_a.Sub(big.NewInt(v), bigv_a)
+
 	bb := big.NewInt(b)
-	ba := big.NewInt(a)
-	bigv_b = bigv_b.Sub(bigv_b, bb)
-	bigv_b = bigv_b.Add(bigv_b, b2)
-	bigv_a = bigv_a.Sub(bigv_a, ba)
+	bigv_b := b2.Sub(b2, bb)
+	bigv_b = bigv_b.Add(big.NewInt(v), bigv_b)
+
 
 	var amount_b ristretto.Scalar
 	var amount_a ristretto.Scalar
@@ -111,19 +119,26 @@ func GenProof(v int64, c Commitment, a int64, b int64) (RangeProof, error) {
 
 	c_b := ped_b.CommitToScalar(amount_b)
 	c_a := ped_a.CommitToScalar(amount_a)
+	c_cb := pedersen.Add(c.PedersenCommitment, c_b)
+	c_ca := pedersen.Sub(c.PedersenCommitment, c_a)
 
 	amounts = append(amounts, amount_b)
 	amounts = append(amounts, amount_a)
-	commitments = append(commitments, c_b)
-	commitments = append(commitments, c_a)
+	commitments = append(commitments, c_cb)
+	commitments = append(commitments, c_ca)
 
 	p, err := Prove(amounts, commitments, true)
 
-	output := RangeProof{
+	output := RangeProof {
 		P: p,
 		A: a,
+		CA: Commitment{ PedersenCommitment: c_a },
+		CApC: Commitment{ PedersenCommitment: c_ca },
 		B: b,
-		C: c1,
+		CB: Commitment{ PedersenCommitment: c_b },
+		CBpC: Commitment{ PedersenCommitment: c_cb },
+		CC: c,
+		C: c_v,
 	}
 
 	return output, err
@@ -135,6 +150,18 @@ func GenProof(v int64, c Commitment, a int64, b int64) (RangeProof, error) {
 returns true if a valid proof, and false otherwise.
 */
 func VerifyProof(p RangeProof) (err error) {
+
+	if !(p.CApC.PedersenCommitment.Equals(pedersen.Sub(
+			p.CC.PedersenCommitment,
+			p.CA.PedersenCommitment))) {
+		return errors.New("Commitment is inconsistent with lower bound A.")
+	}
+	if !(p.CBpC.PedersenCommitment.Equals(pedersen.Add(
+		p.CC.PedersenCommitment,
+		p.CB.PedersenCommitment))) {
+		return errors.New("Commitment is inconsistent with lower bound B.")
+	}
+
 	defer func() {
 		if r := recover(); r != nil {
 			err = r.(error)
